@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Road Safety System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">
+                <i class="fas fa-road text-primary me-3"></i>
+                Road Safety System
+            </h1>
+            <p class="lead">
+                Report road issues, track repairs, and help make our roads safer for everyone.
+            </p>
+            <hr class="my-4">
+            <p>
+                Our platform connects citizens, administrators, and contractors to efficiently 
+                manage road maintenance and safety issues.
+            </p>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Users</h5>
+                            <p class="card-text">Report road issues and track their resolution</p>
+                            <a href="{% url 'user_register' %}" class="btn btn-primary">Register as User</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-hard-hat fa-3x text-warning mb-3"></i>
+                            <h5 class="card-title">Contractors</h5>
+                            <p class="card-text">Manage assigned repairs and provide updates</p>
+                            <a href="{% url 'contractor_register' %}" class="btn btn-warning">Register as Contractor</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-cog fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Administrators</h5>
+                            <p class="card-text">Verify complaints and manage assignments</p>
+                            <a href="{% url 'login' %}" class="btn btn-success">Admin Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

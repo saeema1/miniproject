@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+{% block title %}Email Search - Road Safety System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-search me-2"></i>Search by Email
+        </h2>
+    </div>
+</div>
+
+<!-- Search Form -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-envelope me-2"></i>Search Users, Contractors, and Complaints
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{% url 'search_by_email' %}">
+                    <div class="input-group">
+                        <input type="email" name="email" class="form-control" placeholder="Enter email address to search..." value="{{ search_email }}" required>
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Results -->
+{% if search_email %}
+    {% if has_results %}
+        <!-- Users Found -->
+        {% if results.users %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users me-2"></i>Users Found ({{ results.users.count }})
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>Date Joined</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in results.users %}
+                                    <tr>
+                                        <td><strong>{{ user.username }}</strong></td>
+                                        <td>{{ user.get_full_name|default:"N/A" }}</td>
+                                        <td>{{ user.email }}</td>
+                                        <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                                        <td>
+                                            {% if user.is_staff %}
+                                                <span class="badge bg-success">Admin</span>
+                                            {% elif user.contractor %}
+                                                <span class="badge bg-warning">Contractor</span>
+                                            {% else %}
+                                                <span class="badge bg-primary">User</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Contractors Found -->
+        {% if results.contractors %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-hard-hat me-2"></i>Contractors Found ({{ results.contractors.count }})
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Company Name</th>
+                                        <th>Contact Person</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Specialization</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for contractor in results.contractors %}
+                                    <tr>
+                                        <td><strong>{{ contractor.company_name }}</strong></td>
+                                        <td>{{ contractor.user.get_full_name|default:contractor.user.username }}</td>
+                                        <td>{{ contractor.user.email }}</td>
+                                        <td>{{ contractor.phone }}</td>
+                                        <td>{{ contractor.specialization }}</td>
+                                        <td>
+                                            {% if contractor.is_verified %}
+                                                <span class="badge bg-success">Verified</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Complaints Found -->
+        {% if results.complaints %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clipboard-list me-2"></i>Complaints Found ({{ results.complaints.count }})
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Submitted</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for complaint in results.complaints %}
+                                    <tr>
+                                        <td><strong>{{ complaint.title }}</strong></td>
+                                        <td>{{ complaint.user.get_full_name|default:complaint.user.username }}</td>
+                                        <td>{{ complaint.user.email }}</td>
+                                        <td>{{ complaint.get_complaint_type_display }}</td>
+                                        <td>
+                                            <span class="status-{{ complaint.status }}">
+                                                {{ complaint.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td>{{ complaint.created_at|date:"M d, Y" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    {% else %}
+        <!-- No Results -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No results found</h5>
+                        <p class="text-muted">No users, contractors, or complaints found for email: <strong>{{ search_email }}</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
+
+<!-- Back Button -->
+<div class="row mt-3">
+    <div class="col-12">
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %} 

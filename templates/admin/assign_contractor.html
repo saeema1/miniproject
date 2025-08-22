@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Assign Contractor - Road Safety System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-user-tie me-2"></i>Assign Contractor to Complaint
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Complaint Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Title:</strong> {{ complaint.title }}</p>
+                        <p><strong>Type:</strong> {{ complaint.get_complaint_type_display }}</p>
+                        <p><strong>Priority:</strong> {{ complaint.get_priority_display }}</p>
+                        <p><strong>Location:</strong> {{ complaint.location }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Status:</strong> {{ complaint.get_status_display }}</p>
+                        <p><strong>Submitted:</strong> {{ complaint.created_at|date:"M d, Y H:i" }}</p>
+                        <p><strong>By:</strong> {{ complaint.user.get_full_name|default:complaint.user.username }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <p><strong>Description:</strong></p>
+                        <p>{{ complaint.description }}</p>
+                    </div>
+                </div>
+                {% if complaint.image %}
+                <div class="row">
+                    <div class="col-12">
+                        <p><strong>Image:</strong></p>
+                        <img src="{{ complaint.image.url }}" alt="Complaint Image" class="img-fluid" style="max-width: 300px;">
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Assign Contractor</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.contractor.id_for_label }}" class="form-label">Contractor</label>
+                        {{ form.contractor }}
+                        {% if form.contractor.errors %}
+                            <div class="text-danger">{{ form.contractor.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.estimated_completion_date.id_for_label }}" class="form-label">Estimated Completion Date</label>
+                        {{ form.estimated_completion_date }}
+                        {% if form.estimated_completion_date.errors %}
+                            <div class="text-danger">{{ form.estimated_completion_date.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.status_update.id_for_label }}" class="form-label">Status Update</label>
+                        {{ form.status_update }}
+                        {% if form.status_update.errors %}
+                            <div class="text-danger">{{ form.status_update.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-tie me-2"></i>Assign Contractor
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %} 

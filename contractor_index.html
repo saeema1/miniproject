@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Contractor Dashboard</h2>
+<h3>Assigned Complaints</h3>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th>Update</th>
+    </tr>
+    {% for assignment in assignments %}
+    <tr>
+        <td>{{ assignment.complaint.title }}</td>
+        <td>{{ assignment.complaint.location }}</td>
+        <td>{{ assignment.status }}</td>
+        <td>
+            <a href="#">Update Status</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
