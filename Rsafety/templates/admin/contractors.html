@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Contractors - Road Safety System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-user-tie me-2"></i>Contractors Management
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>All Contractors
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if contractors %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Company</th>
+                                    <th>Specialization</th>
+                                    <th>Status</th>
+                                    <th>Registered</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for contractor in contractors %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ contractor.user.get_full_name|default:contractor.user.username }}</strong>
+                                    </td>
+                                    <td>{{ contractor.user.email }}</td>
+                                    <td>{{ contractor.phone }}</td>
+                                    <td>{{ contractor.company_name }}</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ contractor.specialization }}</span>
+                                    </td>
+                                    <td>
+                                        {% if contractor.is_verified %}
+                                            <span class="badge bg-success">Verified</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ contractor.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        {% if not contractor.is_verified %}
+                                            <form method="post" action="/dashboard/contractor/{{ contractor.id }}/verify/" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button class="btn btn-sm btn-success" onclick="return confirm('Are you sure you want to verify this contractor?')">
+                                                    <i class="fas fa-check"></i> Verify
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="text-success"><i class="fas fa-check-circle"></i> Verified</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-user-tie fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No contractors registered yet</h5>
+                        <p class="text-muted">Contractors will appear here once they register.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<script></script>
+{% endblock %} 

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Status - Road Safety System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-edit me-2"></i>Update Work Status
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Complaint Information -->
+                <div class="alert alert-info">
+                    <h6>Complaint Details:</h6>
+                    <p class="mb-1"><strong>Title:</strong> {{ assignment.complaint.title }}</p>
+                    <p class="mb-1"><strong>Location:</strong> {{ assignment.complaint.location }}</p>
+                    <p class="mb-1"><strong>Type:</strong> {{ assignment.complaint.get_complaint_type_display }}</p>
+                    <p class="mb-0"><strong>Current Status:</strong> 
+                        <span class="status-{{ assignment.complaint.status }}">
+                            {{ assignment.complaint.get_status_display }}
+                        </span>
+                    </p>
+                </div>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="status" class="form-label">
+                            <i class="fas fa-tasks me-1"></i>Update Status *
+                        </label>
+                        <select name="status" id="status" class="form-control" required>
+                            <option value="">Select Status</option>
+                            <option value="assigned" {% if assignment.complaint.status == 'assigned' %}selected{% endif %}>Assigned</option>
+                            <option value="in_progress" {% if assignment.complaint.status == 'in_progress' %}selected{% endif %}>Work In Progress</option>
+                            <option value="completed" {% if assignment.complaint.status == 'completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.update_text.id_for_label }}" class="form-label">
+                            <i class="fas fa-comment me-1"></i>Work Update *
+                        </label>
+                        {{ form.update_text }}
+                        {% if form.update_text.errors %}
+                            <div class="text-danger">{{ form.update_text.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">Provide detailed information about the work progress, challenges, or completion details</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.update_image.id_for_label }}" class="form-label">
+                            <i class="fas fa-camera me-1"></i>Progress Photo (Optional)
+                        </label>
+                        {{ form.update_image }}
+                        {% if form.update_image.errors %}
+                            <div class="text-danger">{{ form.update_image.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">Upload a photo showing the current work progress or completion</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'contractor_dashboard' %}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Update Status
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Previous Updates -->
+        {% if assignment.complaint.complaintupdate_set.all %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-history me-2"></i>Previous Updates
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for update in assignment.complaint.complaintupdate_set.all|slice:":3" %}
+                <div class="border-bottom pb-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6>{{ update.created_at|date:"F d, Y H:i" }}</h6>
+                            <p class="mb-2">{{ update.update_text }}</p>
+                            {% if update.update_image %}
+                            <img src="{{ update.update_image.url }}" alt="Update Image" class="img-fluid rounded" style="max-width: 200px;">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

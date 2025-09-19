@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}User Dashboard - Road Safety System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-tachometer-alt me-2"></i>Welcome, {{ user.get_full_name|default:user.username }}
+        </h2>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">{{ total_complaints }}</h4>
+                        <p class="card-text">Total Complaints</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clipboard-list fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">{{ pending_complaints }}</h4>
+                        <p class="card-text">Pending</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">{{ complaints|length }}</h4>
+                        <p class="card-text">Assigned</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-tools fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 class="card-title">{{ completed_complaints }}</h4>
+                        <p class="card-text">Completed</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="{% url 'post_complaint' %}" class="btn btn-primary me-2">
+            <i class="fas fa-plus me-2"></i>Report New Issue
+        </a>
+        <a href="{% url 'user_notifications' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-bell me-2"></i>View Notifications
+        </a>
+    </div>
+</div>
+
+<!-- Complaints Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>Your Complaints
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if complaints %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Location</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Submitted</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complaint in complaints %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ complaint.title }}</strong>
+                                        {% if complaint.image %}
+                                            <i class="fas fa-image text-info ms-1" title="Has image"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ complaint.get_complaint_type_display }}</span>
+                                    </td>
+                                    <td>{{ complaint.location }}</td>
+                                    <td>
+                                        <span class="priority-{{ complaint.priority }}">
+                                            {{ complaint.get_priority_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-{{ complaint.status }}">
+                                            {{ complaint.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ complaint.created_at|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'complaint_detail' complaint.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No complaints yet</h5>
+                        <p class="text-muted">Start by reporting a road issue in your area.</p>
+                        <a href="{% url 'post_complaint' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Report Your First Issue
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
